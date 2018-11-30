@@ -14,5 +14,5 @@ function outputImage = AffineTransformation(inputImage,A,b)
         end
     end
     outputImage = uint8(outputImage);
-    imshow(outputImage);
+%     imshow(outputImage);
 end
