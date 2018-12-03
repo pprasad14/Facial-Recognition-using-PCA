@@ -7,17 +7,6 @@ faces = load_images();
 Fi = load_coordinates();
 labels = load_labels();
 
-
-% for i=1:length(Fi)
-% %     count = mod(i,6);
-% %     heading = strcat(labels(i),string(count));
-% %    imshow(insertMarker(uint8(faces(:,:,:,i)),Fi(:,:,i),'o','size',10)), title(heading);
-%     imshow(insertMarker(uint8(faces(:,:,:,i)),Fi(:,:,i),'o','size',10)), title(i);
-% 
-%     pause(0.5);
-% end
-
-
 %% Define predefined locations:
 Fd = [13 20 ; 50 20; 34 34 ; 16 50 ; 48 50];
 
