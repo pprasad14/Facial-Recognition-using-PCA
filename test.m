@@ -50,10 +50,13 @@ while(diffF > 0.0001)
     numIterations = numIterations + 1;
 end
 
-FacesSmall = zeros(64,64,3,length(Fi));
+FacesSmall = zeros(64,64,length(Fi));
 for index=1:length(Fi)
-    FacesSmall(:,:,index) = ...
-            rgb2gray( AffineTransformation(faces(:,:,:,index),AllA(:,:,index),Allb(:,:,index)) ) ;
+    indFace = faces(:,:,:,index);
+    indA = AllA(:,:,index);
+    indB = Allb(:,:,index);
+    faceSmall = AffineTransformation( indFace, indA, indB);
+    FacesSmall(:,:,index) = rgb2gray(faceSmall);
 end
 
 %% SPLIT THE TRAINING AND THE TESTING DATA
@@ -84,7 +87,7 @@ p = size(trainFaces,3);
 Dfaces = zeros(p , k);
 
 for index = 1:p
-    X = FacesSmall(:,:,trainFaces(index));
+    X = trainFaces(:,:,index);
     Dfaces(index,:) = X(:)';
 end
 
@@ -95,10 +98,10 @@ eigenvalues = eig(SIGMA);
 %% Taking the k principal components to get the 95% of the data
 Deigen = 0;
 Teigen = sum(eigenvalues);
-k=-1;
-while(Deigen < 0.99*Teigen)
-    k = k + 1;
+k = 0;
+while(Deigen < 0.95*Teigen) 
     Deigen = sum(eigenvalues(end-k:end));
+    k = k + 1;
 end
 
 projectionPCA = V(:, end-k:end);
@@ -126,7 +129,7 @@ p = size(testFaces,3);
 TESTfaces = zeros(p , k);
 
 for index = 1:p
-    XT = FacesSmall(:,:,testIndex(index));
+    XT = trainFaces(:,:,index);
     TESTfaces(index,:) = XT(:)';
 end
 
@@ -139,29 +142,31 @@ for index = 1:p
     distances = BASEprojectedIMAGES - querry;
     Eudistanc = sum(distances.*distances,2);
     
+    % Sort the euclidian distances
+    [SortedEdist,position] = sort(Eudistanc);
+    pos = position(1:3);
+%     pos = zeros(3,1);
+%     for index1=1:3
+%       [~,pos(index1)] = min(Eudistanc);
+%       % remove for the next iteration the last smallest value:
+%       Eudistanc(pos(index1)) = [];
+%     end
     
-    pos = zeros(3,1);
-    for index1=1:3
-      [~,pos(index1)] = min(Eudistanc);
-      % remove for the next iteration the last smallest value:
-      Eudistanc(pos(index1)) = [];
-    end
-    
-    subplot(4,1,1)
+    subplot(1,4,1)
     imshow(uint8(FacesSmall(:,:,testIndex(index))));
     title('INPUT IMAGE')
     
-    subplot(4,1,2)
+    subplot(1,4,2)
     imshow(uint8(FacesSmall(:,:,trainIndex(pos(1)))));
-    title('INPUT IMAGE')
+    title('MATCH IMAGE 1')
     
-    subplot(4,1,3)
+    subplot(1,4,3)
     imshow(uint8(FacesSmall(:,:,trainIndex(pos(2)))));
-    title('INPUT IMAGE')
+    title('MATCH IMAGE 2')
     
-    subplot(4,1,4)
+    subplot(1,4,4)
     imshow(uint8(FacesSmall(:,:,trainIndex(pos(3)))));
-    title('INPUT IMAGE')
+    title('MATCH IMAGE 3')
     pause(2)
 end
 
