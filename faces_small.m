@@ -1,4 +1,4 @@
-function [FacesSmall] = faces_small(faces, Fi, Fd)
+function [FacesSmall,FaceSmallColor] = faces_small(faces, Fi, Fd)
     Fbar = Fi(:,:,1);
     diffF =  norm(Fbar);
     numIterations = 0;
@@ -28,12 +28,21 @@ function [FacesSmall] = faces_small(faces, Fi, Fd)
     end
 
     FacesSmall = zeros(64,64,length(Fi));
+    FaceSmallColor = zeros(64,64,3,length(Fi));
     for index=1:length(Fi)
         indFace = faces(:,:,:,index);
         indA = AllA(:,:,index);
         indB = Allb(:,:,index);
         faceSmall = AffineTransformation( indFace, indA, indB);
-        FacesSmall(:,:,index) = rgb2gray(faceSmall);
+        faceSmall_1 = rgb2gray(uint8(faceSmall));
+%         faceSmall_1 = imadjust(faceSmall_1);
+        % rgb2lin ->>0.6667    0.8333
+        % rgb2lin(adjust) ->> 0.6970    0.8182 
+        % rgb2grey ->>  0.7424    0.7879
+        % rgb2hsv
+        FacesSmall(:,:,index) = faceSmall_1;
+%         FacesSmall(:,:,index) = rgb2gray(faceSmall);
+        FaceSmallColor(:,:,:,index) = faceSmall;
     end
 end
 

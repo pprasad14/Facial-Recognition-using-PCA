@@ -41,10 +41,11 @@ BASEprojectedIMAGES = Dfaces*projectionPCA;
 
 %% TEST IMAGES
 % Obtain the d-dimensional space
-[TESTfaces , p] = get_test_D_faces(testFaces,trainFaces);
+[TESTfaces , p] = get_test_D_faces(testFaces);
 
 %% PROJECT THE TRAINING FACES IN THE PCA SPACE
 TESTprojected = TESTfaces * projectionPCA;
 
 %% CALCULATE THE EUCLIDIAN DISTANCE AND DISPLAY SIMILAR IMAGES
-find_euclidian_and_display(p,TESTprojected,BASEprojectedIMAGES,FacesSmall,testIndex,trainIndex);
+Statistics = find_euclidian_and_display(TESTprojected,BASEprojectedIMAGES,...
+              FacesSmall,testIndex,trainIndex,testLabels,trainLabels, false);
